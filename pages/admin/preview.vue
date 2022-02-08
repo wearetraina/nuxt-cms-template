@@ -17,8 +17,15 @@ export default {
       window.DEBUG_PREVIEW_VIEW = this;
     }
   },
+  mounted(){
+    if(process.client){
+      window.parent.window.postMessage({action:'mounted'});
+    }
+  },
   beforeDestroy() {
-    window.removeEventListener('message', this.updatePreview);
+    if(process.client){
+      window.removeEventListener('message', this.updatePreview);
+    }
   },
   methods:{
     async createCompiledComponent(body){

@@ -4,9 +4,20 @@ export const GeneratePreview = (type, properties=null) => {
   const {createClass, h} = window;
   let previewDataCMS = {}
   let PreviewIframeRef = null;
+
+  let postData = null;
+
+  window.addEventListener('message',(e)=>{
+      const {action} = e.data;
+      if(action === 'mounted' && postData instanceof Function){
+        postData();
+      }
+  })
+
   function setIFrameRef(element){
     PreviewIframeRef = element;
   }
+
 
   return createClass({
     render: function () {
@@ -36,8 +47,11 @@ export const GeneratePreview = (type, properties=null) => {
       const src = `${isLocal ? 'http' : 'https'}://${host}/admin/preview`
       // This will force it out of react notation into a normal object.
       previewDataCMS = JSON.parse(JSON.stringify(data));
-      if (PreviewIframeRef) {
-        PreviewIframeRef.contentWindow.postMessage({action: 'render', data: previewDataCMS});
+      if (PreviewIframeRef){
+        postData = () => {
+          PreviewIframeRef.contentWindow.postMessage({action: 'render', data: previewDataCMS}, src);
+        }
+        postData();
       }
       return h('iframe', {
         src,
