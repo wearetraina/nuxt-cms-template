@@ -30,11 +30,6 @@ export default {
       const parsedBody = micromark(body);
       this.previewContentBody = Vue.compile(`<div>${parsedBody}</div>`);
     },
-    mergeAttrs({optionalFields, requiredFields}){
-      const opt = optionalFields || {};
-      const attr = requiredFields || {};
-      return {...attr, ...opt};
-    },
     updatePreview(e){
       const {action,data} = e.data;
 
