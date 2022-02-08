@@ -5,14 +5,14 @@ export default {
   props:{
     content:{
       type:String,
-      required:true,
+      default:'',
     }
   }
 }
 </script>
 
 <template>
-  <render-markdown :content="content"/>
+  <render-markdown :content="content" :key="content"/>
 </template>
 
 <style scoped>

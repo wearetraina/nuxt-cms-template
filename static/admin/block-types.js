@@ -91,4 +91,15 @@ export const MarkDown = NetlifyCmsBlock({
   ],
 })
 
-export default [MarkDown]
+
+export const ImageBlock = NetlifyCmsBlock({
+  label:"Image",
+  name:"cms-block-image",
+  summary: "{{fields.requiredFields.alt}}",
+  requiredFields:[
+    {label:"Image", name:"image", widget:"image"},
+    {label:"Alt Text", name:"alt", widget:"string"},
+  ]
+})
+
+export default [MarkDown, ImageBlock]
