@@ -1,0 +1,16 @@
+:root:root:root [class*="PreviewPaneContainer-ControlPaneContainer"]{
+  padding:2px;
+}
+
+:root:root:root [class*="ControlContainer"]{
+  margin-top: 2px;
+}
+
+:root:root:root [class*="TopBarContainer"]{
+  padding:2px;
+}
+
+
+:root:root:root [class*="ListItem-listControlItem-ListControl"]{
+  margin-top: 2px;
+}

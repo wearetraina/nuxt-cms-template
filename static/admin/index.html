@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Content Manager</title>
+  <!-- Include the script that enables Netlify Identity on this page. -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <!-- Don't let the CMS start until we say -->
+  <script>window.CMS_MANUAL_INIT = true</script>
+  <link rel="stylesheet" href="./admin.css">
+</head>
+
+<body>
+<!-- Include the script that builds the page and powers Netlify CMS -->
+<script src="https://unpkg.com/netlify-cms@^2.10.183/dist/netlify-cms.js"></script>
+<script src="https://unpkg.com/netlify-cms-widget-uuid-v4/dist/index.js"></script>
+<script type="text/javascript">
+  CMS.registerWidget('uuid', uuidWidget.UuidControl, uuidWidget.UuidPreview)
+</script>
+<script type="module">
+
+  import AvailableBlocks from './block-types.js'
+  import {GeneratePreview} from "./nuxt-preview.js"
+
+  const {CMS, initCMS: init} = window
+
+
+  CMS.registerPreviewTemplate('page', GeneratePreview('page'))
+
+
+  init({
+    config: {
+      load_config_file: false,
+      backend: {
+        name: 'git-gateway',
+        branch: 'main',
+      },
+      local_backend: true,
+      media_folder: 'static/images',
+      public_folder: '/images',
+
+      collections: [
+        {
+          name: 'page',
+          label: 'Pages',
+          folder: 'content/pages',
+          format: 'frontmatter',
+          create: true,
+          slug: '{{slug}}',
+          editor: {
+            preview: true,
+          },
+          fields: [
+            {label: 'Title', name: 'title', widget: 'string'},
+            {label: 'Description', name: 'description', widget: 'string'},
+            {label: 'Meta Title', name:'metaTitle', widget:'string'},
+            {label: 'Before Body', name: 'before-body', widget: 'list', types: AvailableBlocks},
+            {label: 'Body', name: 'body', widget: 'markdown', required:false},
+            {label: 'After Body', name: 'after-body', widget: 'list', types: AvailableBlocks},
+          ],
+        },
+      ],
+    },
+  })
+</script>
+</body>
+
+</html>
