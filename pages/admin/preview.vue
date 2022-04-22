@@ -1,30 +1,33 @@
 <script>
-
+//import NetlifyPreviewMixin from "~/components/mixins/NetlifyPreviewMixin.js";
 import Vue from 'vue/dist/vue.common.js';
+
+import NetlifyPreviewListener from "~/components/mixins/NetlifyPreviewListener.js"
 
 export default {
 
   name: "preview",
+  //mixins:[NetlifyPreviewMixin('updatePreview')],
   data(){
     return {
-      previewContent:{},
+      previewData: {},
       previewContentBody: Vue.compile(`<div></div>`),
     }
   },
   created() {
     if(process.client) {
-      window.addEventListener('message',this.updatePreview)
       window.DEBUG_PREVIEW_VIEW = this;
     }
   },
   mounted(){
     if(process.client){
-      window.parent.window.postMessage({action:'mounted'});
+      this.cleanup = NetlifyPreviewListener(this.updatePreview);
     }
   },
   beforeDestroy() {
-    if(process.client){
-      window.removeEventListener('message', this.updatePreview);
+    if(this.cleanup){
+      this.cleanup();
+      this.cleanup = null;
     }
   },
   methods:{
@@ -37,17 +40,9 @@ export default {
       const parsedBody = micromark(body);
       this.previewContentBody = Vue.compile(`<div>${parsedBody}</div>`);
     },
-    updatePreview(e){
-      const {action,data} = e.data;
-
-      if(action === 'render'){
-        this.$nextTick(()=>{
-          console.log('render action: ', data);
-          this.previewContent = data;
-          this.createCompiledComponent(data.body);
-        });
-      }
-
+    updatePreview(data){
+      this.previewData = data;
+      this.createCompiledComponent(data.body);
     }
   }
 }
@@ -55,9 +50,9 @@ export default {
 
 <template>
   <div>
-    <netlify-cms-block-display v-for="item in previewContent['before-body']" :key="item.uuid" :block="item" />
+    <netlify-cms-block-display v-for="item in previewData['before-body']" :key="item.uuid" :block="item" />
     <component :is="previewContentBody"></component>
-    <netlify-cms-block-display v-for="item in previewContent['after-body']" :key="item.uuid"  :block="item" />
+    <netlify-cms-block-display v-for="item in previewData['after-body']" :key="item.uuid"  :block="item" />
   </div>
 </template>
 
